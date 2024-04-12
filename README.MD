@@ -21,7 +21,7 @@ $curl_files = array(
   'content_file' =>  curl_file_create('path', 'application/pdf', 'contract.pdf')
 );
 
-$ch = curl_init('http://localhost:743/api/verify');
+$ch = curl_init('http://localhost:8080/api/verify');
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $curl_files);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
