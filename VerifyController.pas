@@ -88,10 +88,10 @@ var
   uploadFolder: string;
 
 begin
-  //Путь для загрузки файлов.
+  //РџСѓС‚СЊ РґР»СЏ Р·Р°РіСЂСѓР·РєРё С„Р°Р№Р»РѕРІ.
   uploadFolder := TPath.Combine(AppPath, 'uploads');
 
-  //Если папки нет, создаем.
+  //Р•СЃР»Рё РїР°РїРєРё РЅРµС‚, СЃРѕР·РґР°РµРј.
   if not DirectoryExists(uploadFolder) then
     TDirectory.CreateDirectory(uploadFolder);
 
@@ -101,7 +101,7 @@ begin
   fileNameContent := '';
   fileNameSignature := '';
 
-  //Проверяем наличие файлов
+  //РџСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ С„Р°Р№Р»РѕРІ
   for i := 0 to CTX.Request.RawWebRequest.Files.Count - 1 do
   begin
     if string(CTX.Request.Files[i].FieldName) = 'signature_file' then
@@ -120,7 +120,7 @@ begin
   if (fileNameContent <> '') and (fileNameSignature <> '') then
   begin
 
-    //Сохраняем файлы
+    //РЎРѕС…СЂР°РЅСЏРµРј С„Р°Р№Р»С‹
     lFile := TFile.Create(TPath.Combine(uploadFolder, fileNameContent));
     try
       lFile.CopyFrom(CTX.Request.Files[numberContent].Stream, 0);
@@ -151,20 +151,20 @@ begin
       FreeAndNil(streamSignature);
     end;
 
-    //Удаляем файлы
+    //РЈРґР°Р»СЏРµРј С„Р°Р№Р»С‹
     DeleteFile(TPath.Combine(uploadFolder, fileNameContent));
     DeleteFile(TPath.Combine(uploadFolder, fileNameSignature));
 
     CoInitializeEx(NIL, COINIT_MULTITHREADED);
 
-    //Проверяем с помощью Capicom Verify
-    //Должны быть установлены корневые сертификаты https://goskey.ru/certificates/
+    //РџСЂРѕРІРµСЂСЏРµРј СЃ РїРѕРјРѕС‰СЊСЋ Capicom Verify
+    //Р”РѕР»Р¶РЅС‹ Р±С‹С‚СЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹ РєРѕСЂРЅРµРІС‹Рµ СЃРµСЂС‚РёС„РёРєР°С‚С‹ https://goskey.ru/certificates/
     oSignedData := CoSignedData.Create;
     oSignedData.Content := content;
     try
-      //Подпись отделная // False совмещенная.
+      //РџРѕРґРїРёСЃСЊ РѕС‚РґРµР»РЅР°СЏ // False СЃРѕРІРјРµС‰РµРЅРЅР°СЏ.
       oSignedData.Verify(signedMessage, True, CAPICOM_VERIFY_SIGNATURE_AND_CERTIFICATE);
-      //Информация по сертификату.
+      //РРЅС„РѕСЂРјР°С†РёСЏ РїРѕ СЃРµСЂС‚РёС„РёРєР°С‚Сѓ.
       lJObj1 := TJSONObject.Create;
       try
         lJObj1.AddPair('SubjectName', oSignedData.Signers.Item[1].Certificate.SubjectName);
@@ -213,7 +213,7 @@ begin
     lJObj := TJSONObject.Create;
     try
       lJObj.AddPair('Verify', TJSONBool.Create(False));
-      lJObj.AddPair('Error', 'Отсутсвуют обязательные файлы');
+      lJObj.AddPair('Error', 'РћС‚СЃСѓС‚СЃРІСѓСЋС‚ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ С„Р°Р№Р»С‹');
       lJObj.AddPair('CountFiles',IntToStr(CTX.Request.RawWebRequest.Files.Count));
       responseJson := lJObj.ToString;
       ResponseStatus(400);
